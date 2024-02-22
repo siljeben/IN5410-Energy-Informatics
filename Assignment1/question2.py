@@ -1,13 +1,24 @@
-import requests as r
 import pandas as pd
+import numpy as np
+from matplotlib import pyplot as plt
 
-def RTP_pricing():
-    return pd.read_json(r.get("https://www.hvakosterstrommen.no/api/v1/prices/2023/02-22_NO1.json").text)
+# timeslots for pricing
 
-pricing = RTP_pricing()
+def generate_pricing_data():
+    pricing = np.zeros(24)
+    pricing[0:17] = np.random.uniform(0.45, 0.65, 17)
+    pricing[17:20] = np.random.uniform(0.75, 1.0, 3)
+    pricing[20:24] = np.random.uniform(0.45, 0.65, 4)
+    np.save('data/rt_pricing.npy', pricing)
 
-data = pd.read_csv("datafile.csv")
+# generate_pricing_data()
 
+pricing = np.load('data/rt_pricing.npy')
 
-
+pricing_plot = np.zeros(48)
+pricing_plot[::2] = pricing
+pricing_plot[1::2] = pricing
+plt.plot(np.arange(48)/2, pricing_plot)
+plt.ylim(0, 1)
+plt.show()
 
