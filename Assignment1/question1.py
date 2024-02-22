@@ -3,6 +3,13 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 
+# Assumptions:
+"""
+    - The EV is not home between 8 and 17 and should be done charging at 7
+    - The dishwasher can be run at anytime
+    - The washing machine should be done when the person is awake so that it can be put in the dryer
+"""
+
 # timeslots for pricing
 pricing = np.zeros(24)
 pricing[0:17] = np.random.uniform(0.45, 0.65, 17)
