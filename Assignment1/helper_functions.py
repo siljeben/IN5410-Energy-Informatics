@@ -2,7 +2,7 @@ import pandas as pd
 import enum
 from classes import Appliance
 
-def get_appliances_enum() -> enum.Enum:
+def get_appliances() -> enum.Enum:
     appliances_dict = {}
 
     df_appliances = pd.read_excel('data/energy_usage.xlsx')
@@ -15,8 +15,7 @@ def get_appliances_enum() -> enum.Enum:
                               row['Beta']
         )
         appliances_dict[appliance.name] = appliance
-    return enum.Enum('Appliances', appliances_dict)
+    return appliances_dict
 
 if __name__ == "__main__":
-    print(get_appliances_enum())
-    print(get_appliances_enum().Laundrymachine)
+    print(get_appliances()['Laundrymachine'])
