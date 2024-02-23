@@ -1,6 +1,6 @@
 from typing import List
 import numpy as np
-from helper_functions import get_pricing
+from classes_helper_functions import get_pricing
 
 class Appliance():
     def __init__(self, name: str, shiftable: int, usage_kWh: float, usage_h: int, alpha: int, beta: int) -> None:
