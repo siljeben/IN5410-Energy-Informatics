@@ -1,6 +1,17 @@
 from typing import List
+import numpy as np
 
-
+def get_pricing(pricing: str) -> np.ndarray:
+    if pricing == "ToU":
+        pricing = np.zeros(24)
+        pricing[0:17] = 0.5
+        pricing[17:20] = 1.0
+        pricing[20:24] = 0.5
+    elif pricing == "RTP":
+        pricing = np.load('data/rt_pricing.npy')
+    else:
+        raise ValueError("Pricing must be either 'ToU' or 'RTP'.")
+    return pricing
 
 class Appliance():
     def __init__(self, name: str, shiftable: int, usage_kWh: float, usage_h: int, alpha: int, beta: int) -> None:
@@ -30,8 +41,8 @@ class Neighborhood():
     optimized: bool = False
     num_EV: int = 0
     n_households: int = 0
-    schedule: array
-    pricing: array
+    schedule: np.ndarray
+    pricing: np.ndarray
 
     def __init__(self, name: str, households: int | List[Household] = 0) -> None:
         self.name: str = name
