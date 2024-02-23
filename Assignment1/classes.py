@@ -3,19 +3,25 @@ import numpy as np
 from helper_functions import get_pricing
 
 class Appliance():
-    def __init__(self, name: str, shiftable: int, usage_kWh: float, usage_h: int, alpha: int, beta: int) -> None:
+    def __init__(self, name: str, shiftable: int, usage_h: int, daily_usage_kWh: float,   alpha: int, beta: int) -> None:
         self.name: str = name
         self.shiftable = shiftable # TODO: make enum 
-        self.usage_kWh: float = usage_kWh 
         self.usage_h: int = usage_h
+        self.daily_usage_kWh: float = daily_usage_kWh 
+        self.hourly_max: float = daily_usage_kWh / usage_h
         self.alpha: int = alpha
         self.beta: int = beta 
         if beta - alpha < usage_h:
-            raise ValueError(f"Appliance is used for {usage_h} hours, but usage window is between {alpha} and {beta}.")
+            raise ValueError(f"Appliance '{name}' is used for {usage_h} hours, but usage window is between {alpha} and {beta}.")
+        if shiftable == 0 and beta - alpha > usage_h: #change when enum is made
+            raise ValueError(f"Appliance '{name}' is not shiftable. Window between {alpha} and {beta} gives a range of {beta - alpha} hours, but usage should be {usage_h} hours.")
+        
+    def __str__(self) -> str:
+        self.name
 
 class Household():
-    appliances: List[Appliance] = None
-    n_appliances: int
+    appliances: List[Appliance] = []
+    n_appliances: int = 0
 
     def __init__(self, name: str) -> None:
         self.name: str = name

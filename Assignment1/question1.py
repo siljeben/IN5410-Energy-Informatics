@@ -28,7 +28,7 @@ plt.show()
 our_house = Household("Test house")
 our_house.add_appliances(ev, washing_machine, dishwasher)
 
-lonely_neighborhood = Neighborhood("Lonely", pricing=ToU)
+lonely_neighborhood = Neighborhood("Lonely", pricing="ToU")
 lonely_neighborhood.add_households(our_house)
 lonely_neighborhood.optimize()
 lonely_neighborhood.get_schedule()
