@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+from classes import Household, Neighborhood
 
 
 # Assumptions:
@@ -23,3 +24,11 @@ pricing_plot[1::2] = pricing
 plt.plot(np.arange(48)/2, pricing_plot)
 plt.ylim(0, 1.3)
 plt.show()
+
+our_house = Household("Test house")
+our_house.add_appliances(ev, washing_machine, dishwasher)
+
+lonely_neighborhood = Neighborhood("Lonely", pricing=ToU)
+lonely_neighborhood.add_households(our_house)
+lonely_neighborhood.optimize()
+lonely_neighborhood.get_schedule()
