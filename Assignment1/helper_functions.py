@@ -9,9 +9,8 @@ def get_appliances_enum() -> enum.Enum:
     for i, row in df_appliances.iterrows():
         appliance = Appliance(row['Appliances'].replace(" ", ""),
                               row['Shiftable'],
-                            #   row['Length [h]'],
-                              row['Daily usage [kWh]'],
                               row['Length [h]'],
+                              row['Daily usage [kWh]'],
                               row['Alpha'],
                               row['Beta']
         )
