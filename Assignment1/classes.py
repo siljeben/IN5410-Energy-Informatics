@@ -1,6 +1,6 @@
 from typing import List
-
-
+import numpy as np
+from helper_functions import get_pricing
 
 class Appliance():
     def __init__(self, name: str, shiftable: int, usage_kWh: float, usage_h: int, alpha: int, beta: int) -> None:
@@ -30,8 +30,8 @@ class Neighborhood():
     optimized: bool = False
     num_EV: int = 0
     n_households: int = 0
-    schedule: array
-    pricing: array
+    schedule: np.ndarray
+    pricing: np.ndarray
 
     def __init__(self, name: str, households: int | List[Household] = 0) -> None:
         self.name: str = name
