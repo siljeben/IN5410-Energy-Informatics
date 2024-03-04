@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-from classes import Household, Neighborhood
+from classes import Household, Neighborhood, Appliance
 
 
 # Assumptions:
@@ -25,10 +25,15 @@ plt.plot(np.arange(48)/2, pricing_plot)
 plt.ylim(0, 1.3)
 plt.show()
 
+# TODO: remove when all appliances are in list/dict etc. 
+ev = Appliance('EV', 1, 5, 9.9, 0, 7)
+washing_machine = Appliance('Washing machine', 1, 3, 1.94, 10, 23)
+dishwasher = Appliance('Dish washer', 1, 3, 1.44, 12, 24)
+
 our_house = Household("Test house")
-our_house.add_appliances(ev, washing_machine, dishwasher)
+our_house.add_appliances([ev, washing_machine, dishwasher])
 
 lonely_neighborhood = Neighborhood("Lonely", pricing="ToU")
-lonely_neighborhood.add_households(our_house)
+lonely_neighborhood.add_households([our_house])
 lonely_neighborhood.optimize()
-lonely_neighborhood.get_schedule()
+print(lonely_neighborhood.get_schedule())

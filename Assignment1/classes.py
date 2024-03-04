@@ -1,7 +1,8 @@
-from typing import List
 import numpy as np
-from classes_helper_functions import get_pricing
+from typing import List
 from array import array
+from classes_helper_functions import get_pricing
+from scipy.optimize import linprog
 
 class Appliance():
     def __init__(self, name: str, shiftable: int, usage_h: int, daily_usage_kWh: float,   alpha: int, beta: int) -> None:
@@ -44,10 +45,12 @@ class Neighborhood():
     n_households: int = 0
     schedule: np.ndarray 
     pricing: np.ndarray 
+    peak_load: float 
 
-    def __init__(self, name: str, households: int | List[Household] = 0, pricing:str = "RTP") -> None:
+    def __init__(self, name: str, households: int | List[Household] = 0, pricing:str = "RTP", peak_load: float = 0) -> None:
         self.name: str = name
-        pricing = get_pricing(pricing)
+        self.pricing = get_pricing(pricing)
+        self.peak_load = peak_load
 
         if type(households) is int:
             if households < 0:
@@ -67,12 +70,42 @@ class Neighborhood():
     def add_random_households(self, num_households) -> None:
         for i in range(num_households): 
             pass 
+    
+    def get_linprog_input(self):
+        c = np.array([])
+        l = []
+        u = []
+        A_eq = None
+        b_eq = None
+        A_ub = None
+        b_ub = None 
+        
+        for house in self.houses: 
+            for appliance in house.appliances: 
+                c = np.concatenate((c, self.pricing))
+                l = np.concatenate((l, [0 for _ in range(24)]))
+                u_temp = np.zeros(24)
+                for i in range(appliance.alpha, appliance.beta):
+                    u_temp[i] = appliance.hourly_max 
+                u = np.concatenate((u, u_temp))
+
+                if self.peak_load != 0:
+                    if A_ub is None: 
+                        A_ub = np.identity(24)
+                        b_ub = [self.peak_load for _ in range(24)]
+                    else: 
+                        A_ub = np.append(A_ub, np.identity(24), 1) 
+                        b_ub += [self.peak_load for _ in range(24)]
+                else:
+                    continue
+        return c, u, l, A_eq, b_eq, A_ub, b_ub
 
     def optimize(self):
         # optimize, use linprog
-        c, u, l, A_eq, b_eq, A_ub, b_ub = get_linprog_input(self.houses)
+        c, u, l, A_eq, b_eq, A_ub, b_ub = self.get_linprog_input()
+        res = linprog(c, A_ub, b_ub, A_eq, b_eq, [x for x in zip(l,u)])
         self.optimized = True
-        pass 
+        self.schedule = res.x 
 
     def get_schedule(self):
         if self.optimized is False: 
