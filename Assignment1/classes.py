@@ -7,6 +7,19 @@ import random
 
 class Appliance():
     def __init__(self, name: str, shiftable: int, usage_h: int, daily_usage_kWh: float, alpha: int, beta: int) -> None:
+        """Class that models an appliance and its power usage
+
+        Args:
+            name (str): The name of the appliance
+            shiftable (int): 0 - if it's nonshiftable, 1 if it's shiftable and 2 if it's shiftable, but not required
+            usage_h (int): Amount of hours it should be used
+            daily_usage_kWh (float): The daily usage of the appliance in KWh
+            alpha (int): The start time where the appliance can be used
+            beta (int): The end time where the appliance can be used
+
+        Raises:
+            ValueError: If the appliance data isn't conforming with the constraints
+        """
         self.name: str = name
         self.shiftable = shiftable # TODO: make enum 
         self.usage_h: int = usage_h
@@ -21,7 +34,7 @@ class Appliance():
         if shiftable == 1 and beta - alpha == usage_h: # change to enum
             raise ValueError(f"Appliance '{name}' should be shiftable ")
         
-    def __repr__(self) -> str:
+    def __str__(self) -> str:
         return f'{self.name} ({self.shiftable}, {self.usage_h}, {self.daily_usage_kWh}, {self.alpha}, {self.beta})'
 
 class Household():
@@ -29,13 +42,23 @@ class Household():
     n_appliances: int = 0
 
     def __init__(self, name: str) -> None:
+        """Creation of a household object
+
+        Args:
+            name (str): Name of the house
+        """
         self.name: str = name
     
     def add_appliances(self, appliances: List[Appliance]) -> None:
+        """Function to add a list of appliances to the household
+
+        Args:
+            appliances (List[Appliance]): List of appliances
+        """
         self.appliances.extend(appliances)
         self.n_appliances += len(appliances)
     
-    def __repr__(self):
+    def __str__(self):
         return f"'{self.name}'(#appliances:{self.n_appliances})"
 
 
@@ -49,6 +72,17 @@ class Neighborhood():
     peak_load: float 
 
     def __init__(self, name: str, households: int | List[Household] = 0, pricing:str = "RTP", peak_load: float = 0) -> None:
+        """Function to create a Neighborhood
+
+        Args:
+            name (str): The name of a neighborhood
+            households (int | List[Household], optional): a list of or number of households in the neighborhood. Defaults to 0.
+            pricing (str, optional): The pricing scheme used. Defaults to "RTP".
+            peak_load (float, optional): _description_. Defaults to 0.
+
+        Raises:
+            ValueError: If the household variable isn't conforming with the constraints
+        """
         self.name: str = name
         self.pricing = get_pricing(pricing)
         self.peak_load = peak_load
@@ -64,11 +98,21 @@ class Neighborhood():
             raise ValueError(f"'households' must be of type int or List[Households], but is of type {type(households)}")   
     
     def add_households(self, households: List[Household]) -> None:
+        """Function to add households to a neigborhood
+
+        Args:
+            households (List[Household]): A list of households
+        """
         self.houses.extend(households)
         self.n_households += len(households)
         self.optimized = False
     
-    def add_random_households(self, num_households) -> None:
+    def add_random_households(self, num_households: int) -> None:
+        """A function to add a random number of random households
+
+        Args:
+            num_households (int): The number of random households to add
+        """
         nonshiftable_appliances = get_appliances(filter_shiftable=0) # TODO: Actually import the appliances
         shiftable_appliances = get_appliances(filter_shiftable=1) # TODO: Actually import the appliances
         optional_appliances = get_appliances(filter_shiftable=2, random_selection_n=2) # TODO: Actually import the appliances and add the number of appliances we actually want
@@ -92,6 +136,11 @@ class Neighborhood():
              
     
     def get_linprog_input(self):
+        """Function to get the input for linprog
+
+        Returns:
+            _type_: _description_
+        """
         c = np.array([])
         l = []
         u = []
@@ -134,6 +183,11 @@ class Neighborhood():
         return c, u, l, A_eq, b_eq, A_ub, b_ub
 
     def optimize(self):
+        """Function to optimize the schedule using linprog
+
+        Returns:
+            _type_: The result of the optimization
+        """
         # optimize, use linprog
         c, u, l, A_eq, b_eq, A_ub, b_ub = self.get_linprog_input()
         res = linprog(c, A_ub, b_ub, A_eq, b_eq, [x for x in zip(l,u)])
@@ -142,6 +196,11 @@ class Neighborhood():
         return res
 
     def get_schedule(self):
+        """Function that returns the schedule of the neighborhood
+
+        Returns:
+            _type_: _description_
+        """
         if self.optimized is False: 
             self.optimize()
         return self.schedule
