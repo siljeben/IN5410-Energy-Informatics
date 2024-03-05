@@ -69,15 +69,25 @@ class Neighborhood():
         self.optimized = False
     
     def add_random_households(self, num_households) -> None:
-        appliances = get_appliances() # TODO: Actually import the appliances
+        nonshiftable_appliances = get_appliances(filter_shiftable=0) # TODO: Actually import the appliances
+        shiftable_appliances = get_appliances(filter_shiftable=1) # TODO: Actually import the appliances
+        optional_appliances = get_appliances(filter_shiftable=2) # TODO: Actually import the appliances
+        
+        # Removes the EV from shiftable appliances so that it can be used to 
+        ev = shiftable_appliances["EV"]        
+        shiftable_appliances = shiftable_appliances.pop("EV")
+
         for i in range(num_households): 
             new_house = Household(f"House {i}")
             
-            new_house.add_appliances(random.sample(list(appliances.values()), 4)) #TODO: add the number of appliances we actually want
+            new_house.add_appliances(nonshiftable_appliances)
+            new_house.add_appliances(shiftable_appliances)
+            
+            if random.random() < 0.2: # 20% chance to get an EV at a house
+                new_house.add_appliances(ev)
+            new_house.add_appliances(random.sample(list(optional_appliances.values()), 2)) #TODO: add the number of appliances we actually want
             
             self.add_households(new_house)
-            
-            
              
     
     def get_linprog_input(self):
