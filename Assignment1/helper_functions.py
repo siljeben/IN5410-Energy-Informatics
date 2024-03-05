@@ -1,9 +1,13 @@
 import pandas as pd
-from classes import Appliance
+from appliance import Appliance
+import numpy as np
 
-def get_appliances(filter_shiftable=None, random_selection_n=None) -> list[Appliance]:
+def get_appliances(filter_shiftable=None, random_selection_n=None, output_dict=False) -> list[Appliance] | dict[str, Appliance]:
 
-    appliances_list = []
+    if output_dict:
+        appliances_dict = {}
+    else:
+        appliances_list = []
 
     df_appliances = pd.read_excel('data/energy_usage.xlsx')
 
@@ -21,13 +25,33 @@ def get_appliances(filter_shiftable=None, random_selection_n=None) -> list[Appli
                               row['Alpha'],
                               row['Beta']
         )
-        appliances_list.append(appliance)
-    return appliances_list
+        if output_dict:
+            appliances_dict[appliance.name] = appliance
+        else:
+            appliances_list.append(appliance)
+    if output_dict:
+        return appliances_dict
+    else:
+        return appliances_list
 
-def get_random_optional_shiftable():
+def get_random_optional_shiftable(n=4):
     # randomly drops some optional appliances to simulate a household
-    return get_appliances(filter_shiftable=2, random_selection_n=4)
+    return get_appliances(filter_shiftable=2, random_selection_n=n)
+
+def get_pricing(pricing: str) -> np.ndarray:
+    if pricing == "ToU":
+        pricing = np.zeros(24)
+        pricing[0:17] = 0.5
+        pricing[17:20] = 1.0
+        pricing[20:24] = 0.5
+    elif pricing == "RTP":
+        pricing = np.load('data/rt_pricing.npy')
+    else:
+        raise ValueError("Pricing must be either 'ToU' or 'RTP'.")
+    return pricing
 
 if __name__ == "__main__":
     print(get_appliances())
     print(get_appliances(filter_shiftable=2))
+    print(get_pricing("ToU"))
+    print(get_pricing("RTP"))

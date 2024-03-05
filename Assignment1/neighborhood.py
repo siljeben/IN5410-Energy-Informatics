@@ -1,65 +1,9 @@
 import numpy as np
 from typing import List
-from array import array
-from classes_helper_functions import get_pricing
 from scipy.optimize import linprog
 import random
-
-class Appliance():
-    def __init__(self, name: str, shiftable: int, usage_h: int, daily_usage_kWh: float, alpha: int, beta: int) -> None:
-        """Class that models an appliance and its power usage
-
-        Args:
-            name (str): The name of the appliance
-            shiftable (int): 0 - if it's nonshiftable, 1 if it's shiftable and 2 if it's shiftable, but not required
-            usage_h (int): Amount of hours it should be used
-            daily_usage_kWh (float): The daily usage of the appliance in KWh
-            alpha (int): The start time where the appliance can be used
-            beta (int): The end time where the appliance can be used
-
-        Raises:
-            ValueError: If the appliance data isn't conforming with the constraints
-        """
-        self.name: str = name
-        self.shiftable = shiftable # TODO: make enum 
-        self.usage_h: int = usage_h
-        self.daily_usage_kWh: float = daily_usage_kWh 
-        self.hourly_max: float = daily_usage_kWh / usage_h
-        self.alpha: int = alpha
-        self.beta: int = beta 
-        if beta - alpha < usage_h:
-            raise ValueError(f"Appliance '{name}' is used for {usage_h} hours, but usage window is between {alpha} and {beta}.")
-        if shiftable == 0 and beta - alpha > usage_h: #change when enum is made
-            raise ValueError(f"Appliance '{name}' is not shiftable. Window between {alpha} and {beta} gives a range of {beta - alpha} hours, but usage should be {usage_h} hours.")
-        if shiftable == 1 and beta - alpha == usage_h: # change to enum
-            raise ValueError(f"Appliance '{name}' should be shiftable ")
-        
-    def __str__(self) -> str:
-        return f'{self.name} ({self.shiftable}, {self.usage_h}, {self.daily_usage_kWh}, {self.alpha}, {self.beta})'
-
-class Household():
-    appliances: List[Appliance] = []
-    n_appliances: int = 0
-
-    def __init__(self, name: str) -> None:
-        """Creation of a household object
-
-        Args:
-            name (str): Name of the house
-        """
-        self.name: str = name
-    
-    def add_appliances(self, appliances: List[Appliance]) -> None:
-        """Function to add a list of appliances to the household
-
-        Args:
-            appliances (List[Appliance]): List of appliances
-        """
-        self.appliances.extend(appliances)
-        self.n_appliances += len(appliances)
-    
-    def __str__(self):
-        return f"'{self.name}'(#appliances:{self.n_appliances})"
+from household import Household
+from helper_functions import get_appliances, get_random_optional_shiftable, get_pricing
 
 
 class Neighborhood():
@@ -113,26 +57,26 @@ class Neighborhood():
         Args:
             num_households (int): The number of random households to add
         """
-        nonshiftable_appliances = get_appliances(filter_shiftable=0) # TODO: Actually import the appliances
-        shiftable_appliances = get_appliances(filter_shiftable=1) # TODO: Actually import the appliances
-        optional_appliances = get_appliances(filter_shiftable=2, random_selection_n=2) # TODO: Actually import the appliances and add the number of appliances we actually want
+        nonshiftable_appliances = get_appliances(filter_shiftable=0)
+        shiftable_appliances: dict = get_appliances(filter_shiftable=1, output_dict=True)
         
         # Removes the EV from shiftable appliances so that it can be used to 
-        # Also assumes that the EV is the last in the list, which might be a wrong assumption
-        ev = shiftable_appliances[-1]
-        shiftable_appliances.pop(-1)
+        ev = shiftable_appliances["EV"]        
+        shiftable_appliances.pop("EV")
 
         for i in range(num_households): 
             new_house = Household(f"House {i}")
             
             new_house.add_appliances(nonshiftable_appliances)
-            new_house.add_appliances(shiftable_appliances)
-            new_house.add_appliances(optional_appliances)
+            new_house.add_appliances(shiftable_appliances.values())
             
             if random.random() < 0.2: # 20% chance to get an EV at a house
-                new_house.add_appliances(ev)
+                new_house.add_appliances([ev])
+
+            optional_appliances = get_random_optional_shiftable()
+            new_house.add_appliances(optional_appliances)
             
-            self.add_households(new_house)
+            self.add_households([new_house])
              
     
     def get_linprog_input(self):
