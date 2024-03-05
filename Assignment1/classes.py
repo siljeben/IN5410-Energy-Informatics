@@ -3,6 +3,7 @@ from typing import List
 from array import array
 from classes_helper_functions import get_pricing
 from scipy.optimize import linprog
+import random
 
 class Appliance():
     def __init__(self, name: str, shiftable: int, usage_h: int, daily_usage_kWh: float,   alpha: int, beta: int) -> None:
@@ -68,8 +69,16 @@ class Neighborhood():
         self.optimized = False
     
     def add_random_households(self, num_households) -> None:
+        appliances = get_appliances() # TODO: Actually import the appliances
         for i in range(num_households): 
-            pass 
+            new_house = Household(f"House {i}")
+            
+            new_house.add_appliances(random.sample(list(appliances.values()), 4)) #TODO: add the number of appliances we actually want
+            
+            self.add_households(new_house)
+            
+            
+             
     
     def get_linprog_input(self):
         c = np.array([])
