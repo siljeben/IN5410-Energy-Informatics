@@ -1,9 +1,6 @@
-import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
-from helper_functions import get_appliances
-from household import Household
 from neighborhood import Neighborhood
+from household import Household
 
 def generate_pricing_data():
     pricing = np.zeros(24)
@@ -12,18 +9,15 @@ def generate_pricing_data():
     pricing[20:24] = np.random.uniform(0.45, 0.65, 4)
     np.save('data/rt_pricing.npy', pricing)
 
-pricing = np.load('data/rt_pricing.npy')
-
-# lonely_house = Household("lonely house")
-# print(get_appliances(filter_shiftable=0))
-
-# lonely_house.add_appliances(get_appliances(filter_shiftable=0)) 
-# lonely_house.add_appliances(get_appliances(filter_shiftable=1))
-# print(lonely_house)
-#lonely_house.add_appliances(get_random_optional_shiftable())
-
 random_neighborhood = Neighborhood("another lonely", pricing="RTP")
-random_neighborhood.add_random_households(1)
+
+# random_neighborhood.add_random_households(1)
+# random_neighborhood.houses[0].save('data/random_household.pkl')
+
+random_household = Household.load('data/random_household.pkl')
+print(random_household.appliances)
+random_neighborhood.add_households([random_household])
+
 c, u, l, A_eq, b_eq, A_ub, b_ub = random_neighborhood.get_linprog_input()
 #print(A_eq, b_eq)
 random_neighborhood.optimize()
