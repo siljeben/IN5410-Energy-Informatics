@@ -75,19 +75,32 @@ class Neighborhood():
         c = np.array([])
         l = []
         u = []
-        A_eq = None
-        b_eq = None
+        A_eq = [[]] #matrix
+        b_eq = []
         A_ub = None
         b_ub = None 
+        appliance_counter = 0 
         
         for house in self.houses: 
             for appliance in house.appliances: 
                 c = np.concatenate((c, self.pricing))
                 l = np.concatenate((l, [0 for _ in range(24)]))
                 u_temp = np.zeros(24)
+                A_eq_temp = np.zeros(24)
                 for i in range(appliance.alpha, appliance.beta):
                     u_temp[i] = appliance.hourly_max 
+                    A_eq_temp[i] = 1
+
+                if appliance_counter == 0:
+                    A_eq = [A_eq_temp]
+                else:
+                    A_eq = np.append(A_eq, [[0 for _ in range(24)] for _ in range(appliance_counter)], axis=1)
+                    A_eq = np.append(A_eq, [np.append([0 for _ in range(24*(appliance_counter))], A_eq_temp)], axis=0)
+
                 u = np.concatenate((u, u_temp))
+                b_eq = np.append(b_eq, [appliance.daily_usage_kWh])
+
+                appliance_counter += 1
 
                 if self.peak_load != 0:
                     if A_ub is None: 
