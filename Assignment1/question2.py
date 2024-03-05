@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
-from helper_functions import get_random_optional_shiftable
+from helper_functions import get_appliances
+from classes import Household, Neighborhood
 
 def generate_pricing_data():
     pricing = np.zeros(24)
@@ -10,13 +11,19 @@ def generate_pricing_data():
     pricing[20:24] = np.random.uniform(0.45, 0.65, 4)
     np.save('data/rt_pricing.npy', pricing)
 
-# generate_pricing_data()
 pricing = np.load('data/rt_pricing.npy')
-# pricing_plot = np.zeros(48)
-# pricing_plot[::2] = pricing
-# pricing_plot[1::2] = pricing
-# plt.plot(np.arange(48)/2, pricing_plot)
-# plt.ylim(0, 1)
-# plt.show()
 
-print(get_random_optional_shiftable())
+lonely_house = Household("lonely house")
+print(get_appliances(filter_shiftable=0).values())
+
+lonely_house.add_appliances(get_appliances(filter_shiftable=0).values()) 
+lonely_house.add_appliances(get_appliances(filter_shiftable=1).values())
+#app_to_be_saved = get_random()
+print(lonely_house)
+#lonely_house.add_appliances(get_random_optional_shiftable())
+random_neighborhood = Neighborhood("another lonely", [lonely_house], pricing="RTP")
+c, u, l, A_eq, b_eq, A_ub, b_ub = random_neighborhood.get_linprog_input()
+#print(A_eq, b_eq)
+random_neighborhood.optimize()
+
+#print(random_neighborhood.get_schedule().reshape(-1,24))

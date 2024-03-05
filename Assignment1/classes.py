@@ -6,7 +6,7 @@ from scipy.optimize import linprog
 import random
 
 class Appliance():
-    def __init__(self, name: str, shiftable: int, usage_h: int, daily_usage_kWh: float,   alpha: int, beta: int) -> None:
+    def __init__(self, name: str, shiftable: int, usage_h: int, daily_usage_kWh: float, alpha: int, beta: int) -> None:
         self.name: str = name
         self.shiftable = shiftable # TODO: make enum 
         self.usage_h: int = usage_h
@@ -36,7 +36,7 @@ class Household():
         self.n_appliances += len(appliances)
     
     def __repr__(self):
-        return f"'{self.name}'({self.n_appliances})"
+        return f"'{self.name}'(#appliances:{self.n_appliances})"
 
 
 class Neighborhood():
@@ -114,12 +114,12 @@ class Neighborhood():
                 if self.peak_load != 0:
                     if A_ub is None: 
                         A_ub = np.identity(24)
-                        b_ub = [self.peak_load for _ in range(24)]
                     else: 
                         A_ub = np.append(A_ub, np.identity(24), 1) 
-                        b_ub += [self.peak_load for _ in range(24)]
                 else:
                     continue
+        if A_ub is not None: 
+            b_ub = [self.peak_load for _ in range(24)]
         return c, u, l, A_eq, b_eq, A_ub, b_ub
 
     def optimize(self):
@@ -128,6 +128,7 @@ class Neighborhood():
         res = linprog(c, A_ub, b_ub, A_eq, b_eq, [x for x in zip(l,u)])
         self.optimized = True
         self.schedule = res.x 
+        return res
 
     def get_schedule(self):
         if self.optimized is False: 
