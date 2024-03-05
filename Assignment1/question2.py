@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
+from helper_functions import get_random_optional_shiftable
 
 def generate_pricing_data():
     pricing = np.zeros(24)
@@ -18,17 +19,4 @@ pricing = np.load('data/rt_pricing.npy')
 # plt.ylim(0, 1)
 # plt.show()
 
-def generate_household_appliances(df_appliances):
-    # randomly drops some optional appliances to simulate a household
-    df_appliances = df_appliances.copy()
-    df_shiftable = df_appliances[df_appliances['Shiftable']==2]
-    n_shiftable = len(df_shiftable.index)
-    n_select = 4
-    drop_index = df_shiftable.index[np.random.choice(n_shiftable, n_shiftable - n_select, replace=False)]
-    df_appliances = df_appliances.drop(drop_index)
-    df_appliances.reset_index(drop=True, inplace=True)
-    df_appliances.to_csv('data/energy_usage_selection.csv', index=False)
-
-# df_appliances = pd.read_excel('data/energy_usage.xlsx')
-# generate_household_appliances(df_appliances)
-df_appliances = pd.read_csv('data/energy_usage_selection.csv')
+print(get_random_optional_shiftable())
