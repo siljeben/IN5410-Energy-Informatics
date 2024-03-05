@@ -1,9 +1,9 @@
 import pandas as pd
 from classes import Appliance
 
-def get_appliances(filter_shiftable=None, random_selection_n=None) -> dict[str, Appliance]:
+def get_appliances(filter_shiftable=None, random_selection_n=None) -> list[Appliance]:
 
-    appliances_dict = {}
+    appliances_list = []
 
     df_appliances = pd.read_excel('data/energy_usage.xlsx')
 
@@ -21,8 +21,8 @@ def get_appliances(filter_shiftable=None, random_selection_n=None) -> dict[str, 
                               row['Alpha'],
                               row['Beta']
         )
-        appliances_dict[appliance.name] = appliance
-    return appliances_dict
+        appliances_list.append(appliance)
+    return appliances_list
 
 def get_random_optional_shiftable():
     # randomly drops some optional appliances to simulate a household

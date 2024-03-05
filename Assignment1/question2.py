@@ -14,10 +14,10 @@ def generate_pricing_data():
 pricing = np.load('data/rt_pricing.npy')
 
 lonely_house = Household("lonely house")
-print(get_appliances(filter_shiftable=0).values())
+print(get_appliances(filter_shiftable=0))
 
-lonely_house.add_appliances(get_appliances(filter_shiftable=0).values()) 
-lonely_house.add_appliances(get_appliances(filter_shiftable=1).values())
+lonely_house.add_appliances(get_appliances(filter_shiftable=0)) 
+lonely_house.add_appliances(get_appliances(filter_shiftable=1))
 #app_to_be_saved = get_random()
 print(lonely_house)
 #lonely_house.add_appliances(get_random_optional_shiftable())
