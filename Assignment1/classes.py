@@ -71,7 +71,7 @@ class Neighborhood():
     def add_random_households(self, num_households) -> None:
         nonshiftable_appliances = get_appliances(filter_shiftable=0) # TODO: Actually import the appliances
         shiftable_appliances = get_appliances(filter_shiftable=1) # TODO: Actually import the appliances
-        optional_appliances = get_appliances(filter_shiftable=2, random_selection_n=2) # TODO: Actually import the appliances
+        optional_appliances = get_appliances(filter_shiftable=2, random_selection_n=2) # TODO: Actually import the appliances and add the number of appliances we actually want
         
         # Removes the EV from shiftable appliances so that it can be used to 
         # Also assumes that the EV is the last in the list, which might be a wrong assumption
@@ -83,7 +83,7 @@ class Neighborhood():
             
             new_house.add_appliances(nonshiftable_appliances)
             new_house.add_appliances(shiftable_appliances)
-            new_house.add_appliances(optional_appliances) #TODO: add the number of appliances we actually want
+            new_house.add_appliances(optional_appliances)
             
             if random.random() < 0.2: # 20% chance to get an EV at a house
                 new_house.add_appliances(ev)
