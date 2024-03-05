@@ -17,7 +17,7 @@ class Appliance():
             raise ValueError(f"Appliance '{name}' is used for {usage_h} hours, but usage window is between {alpha} and {beta}.")
         if shiftable == 0 and beta - alpha > usage_h: #change when enum is made
             raise ValueError(f"Appliance '{name}' is not shiftable. Window between {alpha} and {beta} gives a range of {beta - alpha} hours, but usage should be {usage_h} hours.")
-        if shiftable != 0 and beta - alpha == usage_h: # change to enum
+        if shiftable == 1 and beta - alpha == usage_h: # change to enum
             raise ValueError(f"Appliance '{name}' should be shiftable ")
         
     def __repr__(self) -> str:
