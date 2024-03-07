@@ -4,6 +4,16 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 def get_appliances(filter_shiftable=None, random_selection_n=None, output_dict=False) -> list[Appliance] | dict[str, Appliance]:
+    """Function that gets all or n random appliances based on a filter and outputs it as either a dictionary or a list
+
+    Args:
+        filter_shiftable (int, optional): Filter for if we only want the non-shiftable, semi-shiftable or the shiftable appliances. Defaults to None.
+        random_selection_n (int, optional): Value for selecting n random appliances. Defaults to None.
+        output_dict (bool, optional): If true the function returns a dictionary and if false a list. Defaults to False.
+
+    Returns:
+        list[Appliance] | dict[str, Appliance]: A list or dict containing appliances.
+    """
 
     if output_dict:
         appliances_dict = {}
@@ -32,14 +42,31 @@ def get_appliances(filter_shiftable=None, random_selection_n=None, output_dict=F
             appliances_list.append(appliance)
     if output_dict:
         return appliances_dict
-    else:
-        return appliances_list
+    return appliances_list
 
 def get_random_optional_shiftable(n=4):
-    # randomly drops some optional appliances to simulate a household
+    """randomly drops some optional appliances to simulate a household
+
+    Args:
+        n (int, optional): number of random appliances we want. Defaults to 4.
+
+    Returns:
+        list[Appliance] | dict[str, Appliance]: A list or dict containing appliances.
+    """
     return get_appliances(filter_shiftable=2, random_selection_n=n)
 
 def get_pricing(pricing: str) -> np.ndarray:
+    """ A function that fetches the pricing in a numpy array
+
+    Args:
+        pricing (str): The type of pricing wanted, either "ToU" (Time-of-Use) or "RTP" (Real-Time-Pricing)
+
+    Raises:
+        ValueError: Is raised if value isn't ToU or RTP
+
+    Returns:
+        np.ndarray: A numpy array of length 24 containing the pricing data for each hour of the day
+    """
     if pricing == "ToU":
         pricing = np.zeros(24)
         pricing[0:17] = 0.5

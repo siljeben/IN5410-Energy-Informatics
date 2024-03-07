@@ -45,5 +45,5 @@ class Household():
         with open(path, 'rb') as f:
             return pickle.load(f)
     
-    def __repr__(self):
+    def __str__(self):
         return f"'{self.name}'(#appliances:{self.n_appliances})"
