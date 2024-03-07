@@ -8,6 +8,7 @@ from helper_functions import get_appliances, get_random_optional_shiftable, get_
 
 class Neighborhood():
     houses: List[Household] = []
+    house_schedules: List[np.ndarray] = []
     optimized: bool = False
     num_EV: int = 0
     n_households: int = 0
@@ -136,7 +137,7 @@ class Neighborhood():
         c, u, l, A_eq, b_eq, A_ub, b_ub = self.get_linprog_input()
         res = linprog(c, A_ub, b_ub, A_eq, b_eq, [x for x in zip(l,u)])
         self.optimized = True
-        self.schedule = res.x 
+        self.schedule = res.x
         return res
 
     def get_schedule(self):
@@ -148,3 +149,23 @@ class Neighborhood():
         if self.optimized is False: 
             self.optimize()
         return self.schedule
+    
+    def calc_house_schedules(self):
+        """Function to propagate the schedule to the households
+        """
+
+        previous_index = 0
+        for house in self.houses:
+            n_appliances = len(house.appliances)
+            self.house_schedules.append(self.schedule[previous_index:previous_index+24*n_appliances].reshape(-1, 24))
+            previous_index += n_appliances
+
+    def get_house_schedules(self):
+        """Function to get the schedules of the households
+
+        Returns:
+            _type_: _description_
+        """
+        if len(self.house_schedules) == 0:
+            self.calc_house_schedules()
+        return self.house_schedules

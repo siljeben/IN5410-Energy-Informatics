@@ -1,6 +1,7 @@
 import pandas as pd
 from appliance import Appliance
 import numpy as np
+from matplotlib import pyplot as plt
 
 def get_appliances(filter_shiftable=None, random_selection_n=None, output_dict=False) -> list[Appliance] | dict[str, Appliance]:
 
@@ -55,3 +56,20 @@ if __name__ == "__main__":
     print(get_appliances(filter_shiftable=2))
     print(get_pricing("ToU"))
     print(get_pricing("RTP"))
+
+    rtp_pricing = get_pricing("RTP")
+    
+    plot_hours = np.arange(48) / 2
+    plot_pricing = np.repeat(rtp_pricing, 2)
+    
+    plt.plot(plot_hours, plot_pricing, 'r')
+
+    plt.xlim(-1, 24)
+    plt.xticks(np.arange(0, 24, 2))
+    
+    plt.grid()
+
+    plt.xlabel("Time [h]")
+    plt.ylabel("Electricity price [NOK/kWh]")
+
+    plt.show()
