@@ -1,5 +1,6 @@
 import numpy as np
 from helper_functions import get_pricing
+from eval_functions import plot_neighborhood_schedule_shiftable_nonshiftable
 
 from neighborhood import Neighborhood
 
@@ -16,3 +17,5 @@ neighborhood.calc_house_schedules()
 print("\n")
 print("Example of a house schedule:")
 print(neighborhood.house_schedules[0])
+
+plot_neighborhood_schedule_shiftable_nonshiftable(neighborhood)

@@ -154,6 +154,9 @@ class Neighborhood():
         """Function to propagate the schedule to the households
         """
 
+        if self.optimized is False:
+            self.optimize()
+
         previous_index = 0
         for house in self.houses:
             n_appliances = len(house.appliances)

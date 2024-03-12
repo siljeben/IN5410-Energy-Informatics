@@ -5,6 +5,7 @@ from appliance import Appliance
 from household import Household
 from neighborhood import Neighborhood
 from helper_functions import get_appliances
+from eval_functions import plot_household_schedule_appliances
 
 
 # Assumptions:
@@ -22,9 +23,10 @@ dishwasher = appliance_dict["Dishwasher"]
 our_house = Household("Test house")
 our_house.add_appliances([ev, washing_machine, dishwasher])
 
-lonely_neighborhood = Neighborhood("Lonely", pricing="ToU")
+lonely_neighborhood = Neighborhood("Lonely", pricing="ToU", peak_load=1.5)
 lonely_neighborhood.add_households([our_house])
 #x = lonely_neighborhood.get_linprog_input()
 #print(x)
 lonely_neighborhood.optimize()
 print(lonely_neighborhood.get_schedule().reshape(-1,24))
+plot_household_schedule_appliances(our_house, lonely_neighborhood.schedule.reshape(-1, 24), lonely_neighborhood.pricing)
