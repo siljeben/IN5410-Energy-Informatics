@@ -86,7 +86,7 @@ if __name__ == "__main__":
 
     rtp_pricing = get_pricing("RTP")
     
-    plot_hours = np.arange(48) / 2
+    plot_hours = np.concatenate((np.repeat(np.arange(24), 2)[1::], [24]))
     plot_pricing = np.repeat(rtp_pricing, 2)
     
     plt.plot(plot_hours, plot_pricing, 'r')
