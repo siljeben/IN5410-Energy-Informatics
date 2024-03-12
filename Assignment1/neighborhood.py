@@ -120,7 +120,7 @@ class Neighborhood():
                     if A_ub is None: 
                         A_ub = np.identity(24)
                     else: 
-                        A_ub = np.append(A_ub, np.identity(24), 1) 
+                        A_ub = np.append(A_ub, np.identity(24), 1)
                 else:
                     continue
         if A_ub is not None: 
@@ -151,7 +151,7 @@ class Neighborhood():
         return self.schedule
     
     def calc_house_schedules(self):
-        """Function to propagate the schedule to the households
+        """Function to calculate the schedules of the households
         """
 
         if self.optimized is False:
@@ -165,9 +165,6 @@ class Neighborhood():
 
     def get_house_schedules(self):
         """Function to get the schedules of the households
-
-        Returns:
-            _type_: _description_
         """
         if len(self.house_schedules) == 0:
             self.calc_house_schedules()
