@@ -160,7 +160,9 @@ class Neighborhood():
         previous_index = 0
         for house in self.houses:
             n_appliances = len(house.appliances)
-            self.house_schedules.append(self.schedule[previous_index:previous_index+24*n_appliances].reshape(-1, 24))
+            self.house_schedules.append(
+                self.schedule[previous_index:previous_index+24*n_appliances].reshape(-1, 24)
+            )
             previous_index += n_appliances
 
     def get_house_schedules(self):
