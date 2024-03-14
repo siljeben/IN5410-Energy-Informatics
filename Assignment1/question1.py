@@ -25,8 +25,13 @@ our_house.add_appliances([ev, washing_machine, dishwasher])
 
 lonely_neighborhood = Neighborhood("Lonely", pricing="ToU", peak_load=1.5)
 lonely_neighborhood.add_households([our_house])
-#x = lonely_neighborhood.get_linprog_input()
-#print(x)
 lonely_neighborhood.optimize()
-print(lonely_neighborhood.get_schedule().reshape(-1,24))
-plot_household_schedule_appliances(our_house, lonely_neighborhood.schedule.reshape(-1, 24), lonely_neighborhood.pricing)
+
+reshaped_schedule = lonely_neighborhood.get_schedule().reshape(-1,24)
+print(reshaped_schedule)
+plot_household_schedule_appliances(our_house, reshaped_schedule, lonely_neighborhood.pricing)
+
+print("pricing:")
+pricing = np.sum(lonely_neighborhood.pricing * reshaped_schedule)
+print(round(pricing, 5), "Pricing-units")
+
