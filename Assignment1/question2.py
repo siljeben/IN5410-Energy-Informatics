@@ -5,13 +5,12 @@ import numpy as np
 
 random_neighborhood = Neighborhood("another lonely", pricing="RTP")
 
-random_neighborhood.add_random_households(1)
-random_neighborhood.houses[0].save('data/random_household.pkl')
-
-random_household = random_neighborhood.houses[0]
-# random_household = Household.load('data/random_household.pkl')
+# random_neighborhood.add_random_households(1)
+# random_neighborhood.houses[0].save('data/random_household.pkl')
 
 print(random_household.appliances)
+# random_household = random_neighborhood.houses[0]
+random_household = Household.load('data/random_household.pkl')
 random_neighborhood.add_households([random_household])
 
 c, u, l, A_eq, b_eq, A_ub, b_ub = random_neighborhood.get_linprog_input()
