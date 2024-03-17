@@ -6,7 +6,9 @@ from neighborhood import Neighborhood
 
 pricing = get_pricing("RTP")
 
-neighborhood = Neighborhood(name="Neighborhood 1", households=30, pricing="RTP", peak_load=0)
+n_households = 30
+
+neighborhood = Neighborhood(name="Neighborhood 1", households=n_households, pricing="RTP", peak_load=0)
 
 res = neighborhood.optimize()
 schedule = neighborhood.get_schedule()
@@ -19,3 +21,14 @@ print("Example of a house schedule:")
 print(neighborhood.house_schedules[0])
 
 plot_neighborhood_schedule_shiftable_nonshiftable(neighborhood)
+
+print("pricing:")
+pricing_array = [np.multiply(schedules, neighborhood.pricing) for schedules in neighborhood.get_house_schedules()]
+
+total_sum = 0.0
+for subarray in pricing_array:
+    subarray_sum = np.sum(subarray)
+    total_sum += subarray_sum
+
+print("Total sum:", total_sum, "NOK")
+print("Sum per house:", total_sum/n_households, "NOK")
