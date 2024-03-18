@@ -10,7 +10,7 @@ except:
     raise AssertionError("Question 2 must be run first")
 
 else:
-    neighborhood_peak = Neighborhood("Neighborhood with peak", pricing="RTP", peak_load=1.78)
+    neighborhood_peak = Neighborhood("Neighborhood with peak", pricing="RTP", peak_load=2.0)
     neighborhood_peak.add_households([random_household])
 
     res = neighborhood_peak.optimize()
