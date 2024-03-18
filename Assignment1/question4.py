@@ -1,33 +1,22 @@
 from neighborhood import Neighborhood
 from household import Household
-from eval_functions import plot_household_schedule_appliances, plot_household_schedule_shiftable_nonshiftable
-import numpy as np
+from plot_functions import plot_schedule_appliances, plot_schedule_shiftable_nonshiftable
 
-random_neighborhood = Neighborhood("another lonely", pricing="RTP", peak_load=1.77005)
 
-# random_neighborhood.add_random_households(1)
-# random_neighborhood.houses[0].save('data/random_household.pkl')
+try: 
+    random_household = Household.load('data/random_household.pkl')
 
-random_household = Household.load('data/random_household.pkl')
+except: 
+    raise AssertionError("Question 2 must be run first")
 
-print(random_household.n_appliances)
-print(len(random_household.appliances))
+else:
+    neighborhood_peak = Neighborhood("Neighborhood with peak", pricing="RTP", peak_load=1.78)
+    neighborhood_peak.add_households([random_household])
 
-print(random_household.appliances)
-random_neighborhood.add_households([random_household])
+    res = neighborhood_peak.optimize()
 
-c, u, l, A_eq, b_eq, A_ub, b_ub = random_neighborhood.get_linprog_input()
-res = random_neighborhood.optimize()
-schedule = random_neighborhood.get_schedule()
+    plot_schedule_appliances(neighborhood_peak, include_house_name=False)
+    plot_schedule_shiftable_nonshiftable(neighborhood_peak)
 
-house_schedules = random_neighborhood.get_house_schedules()
-
-with np.printoptions(threshold=np.inf):
-    print(np.sum(house_schedules[0], axis=0))
-
-plot_household_schedule_appliances(random_neighborhood.houses[0], house_schedules[0], random_neighborhood.pricing)
-plot_household_schedule_shiftable_nonshiftable(random_neighborhood.houses[0], house_schedules[0], random_neighborhood.pricing)
-
-print("pricing:")
-pricing = np.sum(random_neighborhood.pricing * house_schedules[0].reshape(-1, 24))
-print(round(pricing, 5), "Pricing-units")
+    cost = neighborhood_peak.optimized_value
+    print(f"The energy bill is {cost:.2f} NOK")
