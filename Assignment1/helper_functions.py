@@ -55,6 +55,13 @@ def get_random_optional_shiftable(n=4):
     """
     return get_appliances(filter_shiftable=2, random_selection_n=n)
 
+def generate_pricing_data():
+    pricing = np.zeros(24)
+    pricing[0:17] = np.random.uniform(0.45, 0.65, 17)
+    pricing[17:20] = np.random.uniform(0.75, 1.0, 3)
+    pricing[20:24] = np.random.uniform(0.45, 0.65, 4)
+    np.save('data/rt_pricing.npy', pricing) 
+
 def get_pricing(pricing: str) -> np.ndarray:
     """ A function that fetches the pricing in a numpy array
 
