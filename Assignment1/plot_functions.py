@@ -42,7 +42,7 @@ def plot_schedule_shiftable_nonshiftable(neighborhood: Neighborhood):
     shiftable = np.zeros(24)
     nonshiftable = np.zeros(24)
     for (house, schedule) in zip(neighborhood.houses, neighborhood.get_house_schedules()):
-        for i in range(schedule.shape[0]):
+        for i in range(house.n_appliances):
             appliance = house.appliances[i]
             if appliance.shiftable == 1 or (appliance.shiftable == 2 and appliance.usage_h < appliance.beta - appliance.alpha):
                 shiftable += schedule[i]
