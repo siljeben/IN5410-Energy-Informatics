@@ -3,6 +3,8 @@ from typing import List
 import pickle
 
 class Household():
+    appliances: List[Appliance] = []
+    n_appliances: int = 0
 
     def __init__(self, name: str) -> None:
         """Creation of a household object
@@ -11,8 +13,6 @@ class Household():
             name (str): Name of the house
         """
         self.name: str = name
-        self.appliances: List[Appliance] = []
-        self.n_appliances: int = 0
     
     def add_appliances(self, appliances: List[Appliance]) -> None:
         """Function to add a list of appliances to the household
