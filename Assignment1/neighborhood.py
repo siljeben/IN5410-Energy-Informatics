@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List
+from typing import List, Optional
 from scipy.optimize import linprog
 import random
 from household import Household
@@ -14,16 +14,16 @@ class Neighborhood():
     n_households: int = 0
     schedule: np.ndarray 
     pricing: np.ndarray 
-    peak_load: float 
+    peak_load: Optional[float]
 
-    def __init__(self, name: str, households: int | List[Household] = 0, pricing:str = "RTP", peak_load: float = 0) -> None:
+    def __init__(self, name: str, households: int | List[Household] = 0, pricing:str = "RTP", peak_load: Optional[float] = None) -> None:
         """Function to create a Neighborhood
 
         Args:
             name (str): The name of a neighborhood
             households (int | List[Household], optional): a list of or number of households in the neighborhood. Defaults to 0.
             pricing (str, optional): The pricing scheme used. Defaults to "RTP".
-            peak_load (float, optional): _description_. Defaults to 0.
+            peak_load (float, optional): _description_. Defaults to None.
 
         Raises:
             ValueError: If the household variable isn't conforming with the constraints
@@ -115,7 +115,7 @@ class Neighborhood():
 
                 appliance_counter += 1
 
-                if self.peak_load != 0:
+                if self.peak_load is not None:
                     if A_ub is None: 
                         A_ub = np.identity(24)
                     else: 
