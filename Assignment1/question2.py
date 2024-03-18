@@ -1,27 +1,34 @@
+import numpy as np
 from neighborhood import Neighborhood
 from household import Household
-from eval_functions import plot_household_schedule_appliances, plot_household_schedule_shiftable_nonshiftable
-import numpy as np
-
-random_neighborhood = Neighborhood("another lonely", pricing="RTP")
-
-# random_neighborhood.add_random_households(1)
-# random_neighborhood.houses[0].save('data/random_household.pkl')
-
-random_household:Household = Household.load('data/random_household.pkl')
-random_neighborhood.add_households([random_household])
-
-c, u, l, A_eq, b_eq, A_ub, b_ub = random_neighborhood.get_linprog_input()
-
-random_neighborhood.optimize()
-schedule = random_neighborhood.get_schedule()
+from plot_functions import plot_schedule_appliances, plot_schedule_shiftable_nonshiftable
+from helper_functions import get_appliances, get_random_optional_shiftable
 
 
-house_schedules = random_neighborhood.get_house_schedules()
+try: 
+    # if the function has run before, load value
+    random_household: Household = Household.load('data/random_household.pkl')
+except:
+    random_household: Household = Household("Our second house")
 
-plot_household_schedule_appliances(random_neighborhood.houses[0], house_schedules[0], random_neighborhood.pricing)
-plot_household_schedule_shiftable_nonshiftable(random_neighborhood.houses[0], house_schedules[0], random_neighborhood.pricing)
+    # add all shiftable and non-shiftable appliances
+    nonshiftable_appliances = get_appliances(filter_shiftable=0)
+    shiftable_appliances = get_appliances(filter_shiftable=1)
 
-print("pricing:")
-pricing = np.sum(random_neighborhood.pricing * schedule.reshape(-1, 24))
-print(round(pricing, 5), "Pricing-units")
+    # add a random combination of optional appliances
+    optional_appliances = get_random_optional_shiftable()
+
+    random_household.add_appliances(nonshiftable_appliances + shiftable_appliances + optional_appliances)
+    
+    random_household.save('data/random_household.pkl')
+
+finally: 
+    lonely_richer_neighborhood = Neighborhood("Another lonely", pricing="RTP")
+    lonely_richer_neighborhood.add_households([random_household])
+    lonely_richer_neighborhood.optimize()
+
+    plot_schedule_appliances(lonely_richer_neighborhood, include_house_name=False)
+    plot_schedule_shiftable_nonshiftable(lonely_richer_neighborhood)
+
+    cost = lonely_richer_neighborhood.optimized_value
+    print(f"The energy bill is {cost:.2f} NOK")

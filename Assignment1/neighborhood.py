@@ -9,7 +9,7 @@ from helper_functions import get_appliances, get_random_optional_shiftable, get_
 class Neighborhood():
     houses: List[Household] = []
     house_schedules: List[np.ndarray] = []
-    optimized: bool = False
+    optimized_value: bool | float = False
     num_EV: int = 0
     n_households: int = 0
     schedule: np.ndarray 
@@ -50,7 +50,7 @@ class Neighborhood():
         """
         self.houses.extend(households)
         self.n_households += len(households)
-        self.optimized = False
+        self.optimized_value = False
     
     def add_random_households(self, num_households: int) -> None:
         """A function to add a random number of random households
@@ -62,8 +62,7 @@ class Neighborhood():
         shiftable_appliances: dict = get_appliances(filter_shiftable=1, output_dict=True)
         
         # Removes the EV from shiftable appliances so that it can be used to 
-        ev = shiftable_appliances["EV"]        
-        shiftable_appliances.pop("EV")
+        ev = shiftable_appliances.pop("EV")
 
         for i in range(num_households): 
             new_house = Household(f"House {i}")
@@ -136,7 +135,7 @@ class Neighborhood():
         # optimize, use linprog
         c, u, l, A_eq, b_eq, A_ub, b_ub = self.get_linprog_input()
         res = linprog(c, A_ub, b_ub, A_eq, b_eq, [x for x in zip(l,u)])
-        self.optimized = True
+        self.optimized_value = res.fun
         self.schedule = res.x
         return res
 
@@ -146,28 +145,28 @@ class Neighborhood():
         Returns:
             _type_: _description_
         """
-        if self.optimized is False: 
+        if self.optimized_value is False: 
             self.optimize()
         return self.schedule
     
-    def calc_house_schedules(self):
+    def _calc_house_schedules(self):
         """Function to calculate the schedules of the households
         """
 
-        if self.optimized is False:
+        if self.optimized_value is False:
             self.optimize()
 
         previous_index = 0
         for house in self.houses:
-            n_appliances = len(house.appliances)
+            n_appliances = house.n_appliances
             self.house_schedules.append(
                 self.schedule[previous_index:previous_index+24*n_appliances].reshape(-1, 24)
             )
-            previous_index += n_appliances
+            previous_index += 24*n_appliances
 
     def get_house_schedules(self):
         """Function to get the schedules of the households
         """
         if len(self.house_schedules) == 0:
-            self.calc_house_schedules()
+            self._calc_house_schedules()
         return self.house_schedules
