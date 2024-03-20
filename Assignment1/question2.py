@@ -1,34 +1,34 @@
-import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
+from neighborhood import Neighborhood
+from household import Household
+from plot_functions import plot_schedule_appliances, plot_schedule_shiftable_nonshiftable
+from helper_functions import get_appliances, get_random_optional_shiftable
 
-def generate_pricing_data():
-    pricing = np.zeros(24)
-    pricing[0:17] = np.random.uniform(0.45, 0.65, 17)
-    pricing[17:20] = np.random.uniform(0.75, 1.0, 3)
-    pricing[20:24] = np.random.uniform(0.45, 0.65, 4)
-    np.save('data/rt_pricing.npy', pricing)
 
-# generate_pricing_data()
-pricing = np.load('data/rt_pricing.npy')
-# pricing_plot = np.zeros(48)
-# pricing_plot[::2] = pricing
-# pricing_plot[1::2] = pricing
-# plt.plot(np.arange(48)/2, pricing_plot)
-# plt.ylim(0, 1)
-# plt.show()
+try: 
+    # if the function has run before, load value
+    random_household: Household = Household.load('data/random_household.pkl')
+except:
+    random_household: Household = Household("Our second house")
 
-def generate_household_appliances(df_appliances):
-    # randomly drops some optional appliances to simulate a household
-    df_appliances = df_appliances.copy()
-    df_shiftable = df_appliances[df_appliances['Shiftable']==2]
-    n_shiftable = len(df_shiftable.index)
-    n_select = 4
-    drop_index = df_shiftable.index[np.random.choice(n_shiftable, n_shiftable - n_select, replace=False)]
-    df_appliances = df_appliances.drop(drop_index)
-    df_appliances.reset_index(drop=True, inplace=True)
-    df_appliances.to_csv('data/energy_usage_selection.csv', index=False)
+    # add all shiftable and non-shiftable appliances
+    nonshiftable_appliances = get_appliances(filter_shiftable=0)
+    shiftable_appliances = get_appliances(filter_shiftable=1)
 
-# df_appliances = pd.read_excel('data/energy_usage.xlsx')
-# generate_household_appliances(df_appliances)
-df_appliances = pd.read_csv('data/energy_usage_selection.csv')
+    # add a random combination of optional appliances
+    optional_appliances = get_random_optional_shiftable()
+
+    random_household.add_appliances(nonshiftable_appliances + shiftable_appliances + optional_appliances)
+    
+    random_household.save('data/random_household.pkl')
+
+finally: 
+    lonely_richer_neighborhood = Neighborhood("Another lonely", pricing="RTP")
+    lonely_richer_neighborhood.add_households([random_household])
+    lonely_richer_neighborhood.optimize()
+
+    plot_schedule_appliances(lonely_richer_neighborhood, include_house_name=False)
+    plot_schedule_shiftable_nonshiftable(lonely_richer_neighborhood)
+
+    cost = lonely_richer_neighborhood.optimized_value
+    print(f"The energy bill is {cost:.2f} NOK")

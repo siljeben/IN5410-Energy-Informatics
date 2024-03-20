@@ -1,11 +1,15 @@
-import pandas as pd
-from question2 import RTP_pricing
+import numpy as np
+from plot_functions import plot_schedule_appliances, plot_schedule_shiftable_nonshiftable
+from neighborhood import Neighborhood
 
 
-pricing = RTP_pricing()
+n_households = 30
 
-data = pd.read_csv("datafile.csv")
+crowded_neighborhood = Neighborhood(name="New neighborhood", households=n_households, pricing="RTP")
+res = crowded_neighborhood.optimize()
 
+# plot_schedule_appliances(crowded_neighborhood)
+plot_schedule_shiftable_nonshiftable(crowded_neighborhood)
 
-
-
+cost = crowded_neighborhood.optimized_value
+print(f"The energy bill is {cost:.2f} NOK")

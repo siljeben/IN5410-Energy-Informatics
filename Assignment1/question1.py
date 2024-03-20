@@ -1,25 +1,26 @@
-import pandas as pd
-import numpy as np
-from matplotlib import pyplot as plt
+from household import Household
+from neighborhood import Neighborhood
+from helper_functions import get_appliances
+from plot_functions import plot_schedule_appliances, plot_schedule_shiftable_nonshiftable
 
 
-# Assumptions:
-"""
-    - The EV is not home between 8 and 17 and should be done charging at 7
-    - The dishwasher can be run at anytime
-    - The washing machine should be done when the person is awake so that it can be put in the dryer
-"""
+# appliances
+appliance_dict = get_appliances(output_dict=True)
+ev = appliance_dict["EV"]
+washing_machine = appliance_dict["Laundry machine"]
+dishwasher = appliance_dict["Dishwasher"]
 
-# timeslots for pricing
-pricing = np.zeros(24)
-pricing[0:17] = 0.5
-pricing[17:20] = 1.0
-pricing[20:24] = 0.5
+# add appliances to the house
+our_house = Household("Our first house")
+our_house.add_appliances([ev, washing_machine, dishwasher])
 
+# add house to neighborhood and optimize
+lonely_neighborhood = Neighborhood("Lonely", pricing="ToU")
+lonely_neighborhood.add_households([our_house])
+lonely_neighborhood.optimize()
 
-pricing_plot = np.zeros(48)
-pricing_plot[::2] = pricing
-pricing_plot[1::2] = pricing
-plt.plot(np.arange(48)/2, pricing_plot)
-plt.ylim(0, 1.3)
-plt.show()
+# get results from optimization
+cost = lonely_neighborhood.optimized_value
+plot_schedule_appliances(lonely_neighborhood, include_house_name=False)
+#plot_schedule_shiftable_nonshiftable(lonely_neighborhood)
+print(f"The energy bill is {cost:.2f} NOK")
