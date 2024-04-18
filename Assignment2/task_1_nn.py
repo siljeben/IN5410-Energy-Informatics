@@ -64,7 +64,7 @@ for epoch in range(epochs):
         val_loss += criterion(output, y)
         net.train()
     val_loss /= len(validationloader)
-    print(f'Epoch {epoch+1}/{epochs} Loss: {loss.item()}')
+    print(f'Epoch {epoch+1}/{epochs}, Loss: {loss.item()}, Val. Loss: {val_loss.item()}')
 
 # %%
 test_pred = net(torch.tensor(test_x))
@@ -82,11 +82,10 @@ plt.plot(train_pred[:500].detach().numpy(), 'b', label='Predicted power output')
 plt.legend()
 plt.title('Train data')
 plt.ylabel('Power output')
-plt.xticks(np.arange(0, 500, 50), time_train[:500:50], rotation=45)
+plt.xticks(np.arange(0, 500, 48), time_train[:500:48], rotation=45)
 plt.show()
 
 # %%
-# make big plot
 plt.figure(figsize=(15, 7))
 
 plt.plot(test_y, 'r', label='True power output, test data')
@@ -105,5 +104,3 @@ plt.xlabel('Wind speed')
 plt.ylabel('Power output')
 plt.title('Test data over the wind speed')
 plt.show()
-
-
