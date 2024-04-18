@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from matplotlib import pyplot as plt
+from plot_functions import plot_timeseries, speed_power_plot
 
 # %%
 train_df = pd.read_csv('data/TrainData.csv')
@@ -75,32 +76,13 @@ np.sqrt(test_loss.item())
 train_pred = net(torch.tensor(train_x_chron))
 
 # %%
-# make big plot
-plt.figure(figsize=(15, 7))
-plt.plot(train_y_chron[:500], 'r', label='True power output')
-plt.plot(train_pred[:500].detach().numpy(), 'b', label='Predicted power output')
-plt.legend()
-plt.title('Train data')
-plt.ylabel('Power output')
-plt.xticks(np.arange(0, 500, 48), time_train[:500:48], rotation=45)
-plt.show()
+
+plot_timeseries(time_train[:500], [train_y_chron[:500], train_pred[:500].detach().numpy()], ['True output', 'Predicted output'], 'Train data', 'Power output')
 
 # %%
-plt.figure(figsize=(15, 7))
 
-plt.plot(test_y, 'r', label='True power output, test data')
-plt.plot(test_pred.detach().numpy(), 'b', label='Predicted power output, test data')
-plt.legend()
-plt.title('Test data')
-plt.ylabel('Power output')
-plt.xticks(np.linspace(0, 720, 15), time_test[::48], rotation=45)
-plt.show()
+plot_timeseries(time_test, [test_y, test_pred.detach().numpy()], ['True power output', 'Predicted power output'], 'Test data', 'Power output')
 
 # %%
-plt.plot(test_x, test_y, 'ro')
-xsp = np.linspace(0,8, 100).reshape(-1, 1).astype(np.float32)
-plt.plot(xsp, net(torch.tensor(xsp)).detach().numpy(), 'b')
-plt.xlabel('Wind speed')
-plt.ylabel('Power output')
-plt.title('Test data over the wind speed')
-plt.show()
+model = lambda x: net(torch.tensor(x.astype(np.float32).reshape(-1, 1))).detach().numpy()
+speed_power_plot(test_x, test_y, model)
