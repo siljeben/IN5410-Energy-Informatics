@@ -51,7 +51,9 @@ lr_error = np.sqrt(mean_squared_error(y_sol, lr_y_pred))
 print(f"RMSE for the model: {lr_error}") 
 #0.2155597198828209
 
-plot_timeseries(time_train, [y_sol, lr_y_pred], ['True power output', 'Predicted power output'], 'LR model', 'Power output')
+lr_pred_task1 = pd.read_csv('predictions/task1/ForecastTemplate1-LR.csv')['POWER'].values
+
+plot_timeseries(time_train, [y_sol, lr_pred_task1, lr_y_pred], ['True power output', 'Linear Regression Forecast', 'Multiple Linear Regression Forecast'], 'Wind Power Prediction Accuracy Assessment', 'Power output')
 
 """ Save to csv file
 lr_result_df = pd.DataFrame({'TIMESTAMP': pred_df['TIMESTAMP'], 'POWER': lr_y_pred})

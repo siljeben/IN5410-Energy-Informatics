@@ -4,11 +4,13 @@ from typing import List, Optional
 
 def plot_timeseries(time: np.ndarray, data_arrays: List[np.ndarray], labels: List[str], title: str, ylabel: str):
     plt.figure(figsize=(15, 7))
+
+    colors = ['r', 'b', 'g', 'c'] 
     
     for i, (data, label) in enumerate(zip(data_arrays, labels)):
-        if len(data_arrays) == 2:
-            plt.plot(data, label=label, color='r' if i==0 else 'b')
-    
+        color_index = i % len(colors)  
+        plt.plot(data, label=label, color=colors[color_index])
+        
     plt.legend()
     plt.title(title)
     plt.ylabel(ylabel)
