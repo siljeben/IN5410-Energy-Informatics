@@ -36,6 +36,7 @@ knn_y_pred = knn_model.predict(X_test)
 knn_error = np.sqrt(mean_squared_error(y_sol, knn_y_pred))
 
 print(f"Errors for the methods;\n SVR: {svr_error}\n LR: {lr_error}\n kNN: {knn_error}")
+#SVR=0.21374359746589766, LR=0.21638408562354403, kNN=0.23486489675998057
 
 plot_timeseries(time_train, [y_sol, svr_y_pred], ['True power output', 'Predicted power output'], 'SVR model', 'Power output')
 
