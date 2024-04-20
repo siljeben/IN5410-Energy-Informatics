@@ -86,3 +86,8 @@ plot_timeseries(time_test, [test_y, test_pred.detach().numpy()], ['True power ou
 # %%
 model = lambda x: net(torch.tensor(x.astype(np.float32).reshape(-1, 1))).detach().numpy()
 speed_power_plot(test_x, test_y, model)
+
+""" Save to csv file
+nn_result_df = pd.DataFrame({'TIMESTAMP': time_test, 'POWER': test_pred.detach().numpy().flatten()})
+nn_result_df.to_csv('predictions/task1/ForecastTemplate1-NN.csv', index=False)
+"""
