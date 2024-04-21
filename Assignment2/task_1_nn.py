@@ -70,7 +70,8 @@ for epoch in range(epochs):
 # %%
 test_pred = net(torch.tensor(test_x))
 test_loss = criterion(test_pred, torch.tensor(test_y))
-np.sqrt(test_loss.item())
+print(np.sqrt(test_loss.item()))
+# 0.21303973094683254
 
 # %%
 train_pred = net(torch.tensor(train_x_chron))

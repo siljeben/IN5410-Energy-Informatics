@@ -6,34 +6,30 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error
 from sklearn.impute import SimpleImputer
 from plot_functions import plot_timeseries
+from data_processing import components_to_angle
 
 train_df = pd.read_csv('data/TrainData.csv')
 time_train = train_df["TIMESTAMP"]
 pred_df = pd.read_csv('data/WeatherForecastInput.csv')
 solution_df = pd.read_csv('data/Solution.csv')
 
-feature_cols_zonal = ["U10"]
-feature_cols_meridional = ["V10"]
-feature_cols_windspeed = ["WS10"]
 label = "POWER"
 
 # from TrainData; extracting zonal component U10 and the meridional component V10 of the wind forecast to calculate the wind direction, windspeed and power 
-X_train_cols_meridional = train_df.loc[:, feature_cols_meridional].values
-X_train_cols_zonal = train_df.loc[:, feature_cols_zonal].values
+train_df = components_to_angle(train_df)
 
-X_train_wind_direction = np.arctan2(X_train_cols_meridional, X_train_cols_zonal)
-X_train_cols_windspeed = train_df.loc[:, feature_cols_windspeed]
-X_train = np.concatenate((X_train_wind_direction, X_train_cols_windspeed), axis=1)
+X_train_wind_direction = train_df['A10'].values
+X_train_cols_windspeed = train_df['WS10'].values
+X_train = np.stack((X_train_wind_direction, X_train_cols_windspeed), axis=1)
 
 y_train = train_df.loc[:, label]
 
 # from WeatherForecastInput; extracting zonal component U10 and the meridional component V10 of the wind forecast to calculate the wind direction, windspeed and power 
-X_pred_cols_meridional = pred_df.loc[:, feature_cols_meridional].values
-X_pred_cols_zonal = pred_df.loc[:, feature_cols_zonal].values
+pred_df = components_to_angle(pred_df)
 
-X_pred_wind_direction = np.arctan2(X_pred_cols_meridional, X_pred_cols_zonal)
-X_pred_cols_windspeed = pred_df.loc[:, feature_cols_windspeed]
-X_pred = np.concatenate((X_pred_wind_direction, X_pred_cols_windspeed), axis=1)
+X_pred_wind_direction = pred_df['A10'].values
+X_pred_cols_windspeed = pred_df['WS10'].values
+X_pred = np.stack((X_pred_wind_direction, X_pred_cols_windspeed), axis=1)
 
 y_sol = solution_df.loc[:, label]
 
