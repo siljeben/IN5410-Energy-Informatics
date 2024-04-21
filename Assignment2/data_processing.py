@@ -12,3 +12,9 @@ def year_decimal_from_timestamp(timestamp: str):
     format_string = "%Y%m%d %H:%M"
     datetime_obj = datetime.strptime(timestamp, format_string)
     return pyasl.decimalYear(datetime_obj)
+
+def sliding_window_input(data, window_size):
+    X = []
+    for i in range(len(data) - window_size):
+        X.append(data[i:i+window_size])
+    return np.array(X)
