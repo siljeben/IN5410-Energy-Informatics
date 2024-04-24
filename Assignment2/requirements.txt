@@ -17,3 +17,4 @@ scipy==1.12.0
 six==1.16.0
 tzdata==2024.1
 torch==2.1.2
+PyAstronomy==0.21.0
