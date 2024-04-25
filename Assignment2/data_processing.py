@@ -16,14 +16,16 @@ def year_decimal_from_timestamp(timestamp: str):
     return pyasl.decimalYear(datetime_obj)
 
 
-def get_sliding_window_input_output(data, window_size):
+def get_sliding_window_input_output(data: np.ndarray, window_size: int):
     X = []
     for i in range(len(data) - window_size):
         X.append(data[i : i + window_size])
     return np.array(X), data[window_size:]
 
 
-def get_sliding_window_input_test_data(test, train, window_size):
+def get_sliding_window_input_test_data(
+    test: np.ndarray, train: np.ndarray, window_size: int
+):
     X = []
     for i in range(window_size):
         x = np.concatenate([train[-window_size + i :], test[:i]])

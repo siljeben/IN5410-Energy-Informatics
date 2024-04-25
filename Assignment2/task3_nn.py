@@ -11,8 +11,8 @@ from data_processing import (
 )
 from neural_net_models import Net, RNN, train_model
 
-window_size = 144
-epochs = 25
+window_size = 100
+epochs = 100
 lr = 1e-3
 
 train_df = pd.read_csv("data/TrainData.csv")
@@ -68,6 +68,13 @@ def train_ann():
         "Power output",
     )
 
+    # """ Save to csv file
+    ann_result_df = pd.DataFrame(
+        {"TIMESTAMP": time_test, "POWER": test_pred.detach().numpy().flatten()}
+    )
+    ann_result_df.to_csv("predictions/task3/ForecastTemplate3-ANN.csv", index=False)
+    # """
+
 
 # RNN model
 
@@ -82,7 +89,7 @@ def train_rnn():
 
     test_pred = rnn(X_test)
     test_loss = criterion(test_pred, y_test)
-    print("ANN model RMSE: " + str(np.sqrt(test_loss.item())))
+    print("RNN model RMSE: " + str(np.sqrt(test_loss.item())))
 
     plot_timeseries(
         time_test,
@@ -91,6 +98,13 @@ def train_rnn():
         "Test data, RNN model",
         "Power output",
     )
+
+    # """ Save to csv file
+    rnn_result_df = pd.DataFrame(
+        {"TIMESTAMP": time_test, "POWER": test_pred.detach().numpy().flatten()}
+    )
+    rnn_result_df.to_csv("predictions/task3/ForecastTemplate3-RNN.csv", index=False)
+    # """
 
 
 train_ann()
