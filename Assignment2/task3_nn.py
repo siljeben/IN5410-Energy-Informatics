@@ -12,7 +12,7 @@ from data_processing import (
 from neural_net_models import Net, RNN, train_model
 
 window_size = 100
-epochs = 100
+epochs = 50
 lr = 1e-3
 
 train_df = pd.read_csv("data/TrainData.csv")
@@ -60,6 +60,7 @@ def train_ann():
     test_loss = criterion(test_pred, y_test)
     print("ANN model RMSE: " + str(np.sqrt(test_loss.item())))
 
+    """
     plot_timeseries(
         time_test,
         [y_test.numpy(), test_pred.detach().numpy()],
@@ -67,6 +68,7 @@ def train_ann():
         "Test data, ANN model",
         "Power output",
     )
+    """
 
     # """ Save to csv file
     ann_result_df = pd.DataFrame(
@@ -74,6 +76,8 @@ def train_ann():
     )
     ann_result_df.to_csv("predictions/task3/ForecastTemplate3-ANN.csv", index=False)
     # """
+
+    return test_pred.detach().numpy().flatten()
 
 
 # RNN model
@@ -91,6 +95,7 @@ def train_rnn():
     test_loss = criterion(test_pred, y_test)
     print("RNN model RMSE: " + str(np.sqrt(test_loss.item())))
 
+    """
     plot_timeseries(
         time_test,
         [y_test.numpy(), test_pred.detach().numpy()],
@@ -98,6 +103,7 @@ def train_rnn():
         "Test data, RNN model",
         "Power output",
     )
+    """
 
     # """ Save to csv file
     rnn_result_df = pd.DataFrame(
@@ -106,6 +112,19 @@ def train_rnn():
     rnn_result_df.to_csv("predictions/task3/ForecastTemplate3-RNN.csv", index=False)
     # """
 
+    return test_pred.detach().numpy().flatten()
 
-train_ann()
-train_rnn()
+
+ann_y_pred = train_ann()
+rnn_y_pred = train_rnn()
+
+plot_timeseries(
+    time_test,
+    [y_test, ann_y_pred, rnn_y_pred],
+    ["True power output", "ANN prediction", "RNN prediction"],
+    "Wind Power Predictions ANN + RNN",
+    "Normalized power output",
+    savepath="plots/task3/WindPowerPredictionsANN_RNN.svg",
+    figsize=[30, 10],
+    linewidth=1,
+)

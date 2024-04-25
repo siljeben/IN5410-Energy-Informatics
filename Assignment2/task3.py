@@ -62,18 +62,13 @@ print(
 
 plot_timeseries(
     test_pred,
-    [y_sol, svr_y_pred],
-    ["True power output", "Predicted power output"],
-    "SVR model",
-    "Power output",
-)
-
-plot_timeseries(
-    test_pred,
-    [y_sol, lr_y_pred],
-    ["True power output", "Predicted power output"],
-    "LR model",
-    "Power output",
+    [y_sol, lr_y_pred, svr_y_pred],
+    ["True power output", "LR prediction", "SVR prediction"],
+    "Wind Power Predictions LR + SVR",
+    "Normalized power output",
+    savepath="plots/task3/WindPowerPredictionsLR_SVR.svg",
+    figsize=[30, 10],
+    linewidth=1,
 )
 
 """ Save to csv file
