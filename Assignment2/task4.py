@@ -42,17 +42,7 @@ while True:
     last_error = error
     error = 0.5 * (y_true - out_y_pred) ** 2
 
-    if i < 3:
-        print("sum_h1: ", sum_h1)
-        print("out_h1: ", out_h1)
-        print("sum_h2: ", sum_h2)
-        print("out_h2: ", out_h2)
-        print("y_pred: ", y_pred)
-        print("out_y_pred: ", out_y_pred)
-        print("error: ", error)
-        print("")
-
-    # print(f"Iteration: {i}, Error: {error}")
+    print(f"Iteration: {i}, Error: {error}")
 
     if last_error is not None and abs(last_error - error) < min_error_diff:
         break
@@ -112,27 +102,6 @@ while True:
     d_err_d_w5 = d_err_d_out_y_pred * d_out_y_pred_d_y_pred * d_y_pred_d_w5
     d_err_d_w6 = d_err_d_out_y_pred * d_out_y_pred_d_y_pred * d_y_pred_d_w6
 
-    if i < 2:
-        print("d_err_d_out_y_pred: ", d_err_d_out_y_pred)
-        print("d_out_y_pred_d_y_pred: ", d_out_y_pred_d_y_pred)
-        print("d_y_pred_d_w5: ", d_y_pred_d_w5)
-        print("d_y_pred_d_w6: ", d_y_pred_d_w6)
-        print("d_y_pred_d_out_h1: ", d_y_pred_d_out_h1)
-        print("d_y_pred_d_out_h2: ", d_y_pred_d_out_h2)
-        print("d_out_h1_d_h1: ", d_out_h1_d_h1)
-        print("d_out_h2_d_h2: ", d_out_h2_d_h2)
-        print("d_h1_d_w1: ", d_h1_d_w1)
-        print("d_h1_d_w2: ", d_h1_d_w2)
-        print("d_h2_d_w3: ", d_h2_d_w3)
-        print("d_h2_d_w4: ", d_h2_d_w4)
-        print("d_err_d_w1: ", d_err_d_w1)
-        print("d_err_d_w2: ", d_err_d_w2)
-        print("d_err_d_w3: ", d_err_d_w3)
-        print("d_err_d_w4: ", d_err_d_w4)
-        print("d_err_d_w5: ", d_err_d_w5)
-        print("d_err_d_w6: ", d_err_d_w6)
-        print("")
-
     # gradient descent step
     w1 -= lr * d_err_d_w1
     w2 -= lr * d_err_d_w2
@@ -140,16 +109,6 @@ while True:
     w4 -= lr * d_err_d_w4
     w5 -= lr * d_err_d_w5
     w6 -= lr * d_err_d_w6
-
-    if i < 2:
-        print("Updated weights:")
-        print("w1: ", w1)
-        print("w2: ", w2)
-        print("w3: ", w3)
-        print("w4: ", w4)
-        print("w5: ", w5)
-        print("w6: ", w6)
-        print("")
 
     i += 1
 
