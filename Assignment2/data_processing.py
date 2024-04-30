@@ -1,6 +1,5 @@
 import numpy as np
 from datetime import datetime
-from PyAstronomy import pyasl
 
 
 def components_to_angle(df):
@@ -10,10 +9,10 @@ def components_to_angle(df):
     return df
 
 
-def year_decimal_from_timestamp(timestamp: str):
+def convert_str_to_datetime(timestamp: str):
     format_string = "%Y%m%d %H:%M"
     datetime_obj = datetime.strptime(timestamp, format_string)
-    return pyasl.decimalYear(datetime_obj)
+    return datetime_obj
 
 
 def get_sliding_window_input_output(data: np.ndarray, window_size: int):
