@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from plot_functions import plot_timeseries, speed_power_plot
-from neural_net_models import Net, train_model
+from neural_net_models import ANN_Model, train_model
 
 if __name__ == "__main__":
     # %%
@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # %%
     torch.manual_seed(42)
-    net = Net()
+    net = ANN_Model()
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(net.parameters(), lr=1e-3, weight_decay=1e-5)
 

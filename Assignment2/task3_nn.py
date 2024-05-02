@@ -9,11 +9,12 @@ from data_processing import (
     get_sliding_window_input_output,
     get_sliding_window_input_test_data,
 )
-from neural_net_models import Net, RNN, train_model
+from neural_net_models import ANN_Model, RNN_Model, train_model
 
-window_size = 100
-epochs = 50
-lr = 1e-3
+window_size = 2
+epochs = 66
+lr = 3e-3
+weight_decay = 1e-5
 
 train_df = pd.read_csv("data/TrainData.csv")
 time_train = train_df["TIMESTAMP"].values
@@ -47,14 +48,16 @@ validationloader = torch.utils.data.DataLoader(
 torch.manual_seed(42)
 
 
-def train_ann():
+def train_ann(plot: bool = True):
     # ANN model
-    net = Net(window_size)
+    net = ANN_Model(window_size)
 
     criterion = nn.MSELoss()
-    optimizer = torch.optim.RAdam(net.parameters(), lr=lr, weight_decay=1e-6)
+    optimizer = torch.optim.Adam(net.parameters(), lr=lr, weight_decay=weight_decay)
 
-    train_model(epochs, net, criterion, optimizer, trainloader, validationloader)
+    train_model(
+        epochs, net, criterion, optimizer, trainloader, validationloader, plot=plot
+    )
 
     test_pred = net(X_test)
     test_loss = criterion(test_pred, y_test)
@@ -83,13 +86,21 @@ def train_ann():
 # RNN model
 
 
-def train_rnn():
-    rnn = RNN(window_size)
+def train_rnn(plot: bool = True):
+    rnn = RNN_Model(window_size)
 
     criterion = nn.MSELoss()
-    optimizer = torch.optim.RAdam(rnn.parameters(), lr=lr, weight_decay=1e-6)
+    optimizer = torch.optim.Adam(rnn.parameters(), lr=lr, weight_decay=weight_decay)
 
-    train_model(epochs, rnn, criterion, optimizer, trainloader, validationloader)
+    train_model(
+        epochs,
+        rnn,
+        criterion,
+        optimizer,
+        trainloader,
+        validationloader,
+        plot=plot,
+    )
 
     test_pred = rnn(X_test)
     test_loss = criterion(test_pred, y_test)
