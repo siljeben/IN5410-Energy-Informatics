@@ -4,7 +4,7 @@ from sklearn.svm import SVR
 from sklearn.linear_model import LinearRegression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.metrics import mean_squared_error
-from plot_functions import plot_timeseries, speed_power_plot_sklearn
+from plot_functions import plot_timeseries, speed_power_plot
 from data_processing import convert_str_to_datetime
 
 train_df = pd.read_csv('data/TrainData.csv')
@@ -40,7 +40,7 @@ print(f"Errors for the methods;\n SVR: {svr_error}\n LR: {lr_error}\n kNN: {knn_
 #SVR=0.21374359746589766, LR=0.21638408562354403, kNN=0.21628268881107418
 
 for model in [lr_model, svr_model, knn_model]:
-    speed_power_plot_sklearn(X_train=X_train, y_train=y_train, model=model, max=9)
+    speed_power_plot(X_train=X_train, y_train=y_train, model=lambda x: model.predict(x.reshape(-1,1)), x_max=9)
 
 plot_timeseries(time_test, [y_sol, svr_y_pred], ['True power output', 'Predicted power output'], 'SVR model', 'Power output [normalized]', savepath="plots/task1/predictions_SVR.png")
 

@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from plot_functions import plot_timeseries, speed_power_plot
 from neural_net_models import ANN_Model, train_model
+from data_processing import convert_str_to_datetime
 
 if __name__ == "__main__":
     # %%
@@ -19,7 +20,7 @@ if __name__ == "__main__":
 
     # %%
     test_df_x = pd.read_csv("data/WeatherForecastInput.csv")
-    time_test = test_df_x.TIMESTAMP
+    time_test = test_df_x["TIMESTAMP"].apply(convert_str_to_datetime).dt.strftime('%m-%d')
     test_x = test_df_x.WS10.to_numpy(dtype=np.float32).reshape(-1, 1)
     test_df_y = pd.read_csv("data/Solution.csv")
     test_y = test_df_y.POWER.to_numpy(dtype=np.float32).reshape(-1, 1)
@@ -69,8 +70,8 @@ if __name__ == "__main__":
         time_test,
         [test_y, test_pred.detach().numpy()],
         ["True power output", "Predicted power output"],
-        "Test data",
-        "Power output",
+        "NN model",
+        "Power output [normalized]",
     )
 
     # %%
@@ -79,7 +80,7 @@ if __name__ == "__main__":
         .detach()
         .numpy()
     )
-    speed_power_plot(test_x, test_y, model)
+    speed_power_plot(train_x_chron, train_y_chron, model, x_max=9)
 
     """ Save to csv file
     nn_result_df = pd.DataFrame({'TIMESTAMP': time_test, 'POWER': test_pred.detach().numpy().flatten()})
