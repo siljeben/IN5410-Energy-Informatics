@@ -32,6 +32,7 @@ def plot_timeseries(
         time_ticks,
         rotation=45,
     )
+    plt.xlabel("Year 2013")
     if savepath:
         plt.savefig(savepath)
     plt.show()
@@ -46,3 +47,16 @@ def speed_power_plot(data_x, data_y, model):
     plt.ylabel("Power output")
     plt.title("Test data over the wind speed")
     plt.show()
+
+def speed_power_plot_sklearn(X_train, y_train, model, max=15): 
+    plt.scatter(X_train, y_train, facecolors='none', edgecolors='b', label="Data")
+    x = np.linspace(0, max, 100)
+    pred = model.predict(x.reshape(-1,1))
+    plt.plot(x, pred, "r", label="prediction")
+    plt.xlabel("Wind speed [m/s]")
+    plt.ylabel("Power output [normalized]")
+    plt.title("Train data and model")
+    plt.show()
+    
+
+
