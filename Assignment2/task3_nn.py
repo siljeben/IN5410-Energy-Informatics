@@ -11,10 +11,10 @@ from data_processing import (
 )
 from neural_net_models import ANN_Model, RNN_Model, train_model
 
-window_size = 2
-epochs = 66
-lr = 3e-3
-weight_decay = 1e-5
+window_size = 100
+epochs = 100
+lr = 1e-3
+weight_decay = 3e-5
 
 train_df = pd.read_csv("data/TrainData.csv")
 time_train = train_df["TIMESTAMP"].values
@@ -85,9 +85,8 @@ def train_ann(plot: bool = True):
 
 # RNN model
 
-
 def train_rnn(plot: bool = True):
-    rnn = RNN_Model(window_size)
+    rnn = RNN_Model()
 
     criterion = nn.MSELoss()
     optimizer = torch.optim.Adam(rnn.parameters(), lr=lr, weight_decay=weight_decay)
@@ -126,8 +125,8 @@ def train_rnn(plot: bool = True):
     return test_pred.detach().numpy().flatten()
 
 
-ann_y_pred = train_ann()
-rnn_y_pred = train_rnn()
+ann_y_pred = train_ann(plot=False) # 0.13438464645758574
+rnn_y_pred = train_rnn(plot=False) # 0.1214215778680508
 
 plot_timeseries(
     time_test,

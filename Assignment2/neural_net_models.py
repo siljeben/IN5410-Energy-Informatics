@@ -8,20 +8,21 @@ class ANN_Model(nn.Module):
         super().__init__(*args, **kwargs)
         self.lin1 = nn.Linear(window_size, 64)
         self.lin2 = nn.Linear(64, 64)
-        self.lin2 = nn.Linear(64, 64)
-        self.lin3 = nn.Linear(64, 1)
+        self.lin3 = nn.Linear(64, 64)
+        self.lin4 = nn.Linear(64, 1)
 
     def forward(self, x):
         x = torch.tanh(self.lin1(x))
         x = torch.tanh(self.lin2(x))
-        x = torch.sigmoid(self.lin3(x))
+        x = torch.tanh(self.lin3(x))
+        x = torch.sigmoid(self.lin4(x))
         return x
 
 
 class RNN_Model(nn.Module):
-    hidden_dim = 64
+    hidden_dim = 16
 
-    def __init__(self, window_size=1, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.rnn = nn.RNN(1, self.hidden_dim, 2, batch_first=True)
         self.lin = nn.Linear(self.hidden_dim, 1)
