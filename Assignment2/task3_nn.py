@@ -10,6 +10,7 @@ from data_processing import (
     get_sliding_window_input_test_data,
 )
 from neural_net_models import ANN_Model, RNN_Model, train_model
+from data_processing import convert_str_to_datetime
 
 window_size = 100
 epochs = 100
@@ -21,7 +22,7 @@ time_train = train_df["TIMESTAMP"].values
 power_train = train_df["POWER"].values.astype(np.float32)
 
 test_df = pd.read_csv("data/WeatherForecastInput.csv")
-time_test = test_df["TIMESTAMP"].values
+time_test = test_df["TIMESTAMP"].apply(convert_str_to_datetime).dt.strftime('%m-%d')
 power_test = pd.read_csv("data/Solution.csv")["POWER"].values.astype(np.float32)
 
 X_train, y_train = get_sliding_window_input_output(power_train, window_size=window_size)
@@ -46,7 +47,6 @@ validationloader = torch.utils.data.DataLoader(
 )
 
 torch.manual_seed(42)
-
 
 def train_ann(plot: bool = True):
     # ANN model
@@ -75,7 +75,7 @@ def train_ann(plot: bool = True):
 
     # """ Save to csv file
     ann_result_df = pd.DataFrame(
-        {"TIMESTAMP": time_test, "POWER": test_pred.detach().numpy().flatten()}
+        {"TIMESTAMP": test_df["TIMESTAMP"], "POWER": test_pred.detach().numpy().flatten()}
     )
     ann_result_df.to_csv("predictions/task3/ForecastTemplate3-ANN.csv", index=False)
     # """
@@ -117,7 +117,7 @@ def train_rnn(plot: bool = True):
 
     # """ Save to csv file
     rnn_result_df = pd.DataFrame(
-        {"TIMESTAMP": time_test, "POWER": test_pred.detach().numpy().flatten()}
+        {"TIMESTAMP": test_df["TIMESTAMP"], "POWER": test_pred.detach().numpy().flatten()}
     )
     rnn_result_df.to_csv("predictions/task3/ForecastTemplate3-RNN.csv", index=False)
     # """

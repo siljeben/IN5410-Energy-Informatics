@@ -8,6 +8,7 @@ from data_processing import (
     get_sliding_window_input_output,
     get_sliding_window_input_test_data,
 )
+from data_processing import convert_str_to_datetime
 
 # Load data
 pred_df = pd.read_csv("data/WeatherForecastInput.csv")
@@ -19,7 +20,7 @@ time_train = train_df["TIMESTAMP"].values
 power_train = train_df["POWER"].values
 
 
-test_pred = pred_df["TIMESTAMP"].values
+test_pred = pred_df["TIMESTAMP"].apply(convert_str_to_datetime).dt.strftime('%m-%d')
 
 y_sol = solution_df["POWER"].values
 
@@ -63,9 +64,9 @@ print(
 plot_timeseries(
     test_pred,
     [y_sol, lr_y_pred, svr_y_pred],
-    ["True power output", "LR prediction", "SVR prediction"],
+    ["True power output", "LR model", "SVR model"],
     "Wind Power Predictions LR + SVR",
-    "Normalized power output",
+    "Power output [normalized]",
     savepath="plots/task3/WindPowerPredictionsLR_SVR.svg",
     figsize=[30, 10],
     linewidth=1,
